@@ -27,3 +27,11 @@
 *.exe
 *.out
 *.app
+
+Builds/MacOSX/build/Release/BinaryBuilderEx
+
+Builds/MacOSX/build/Debug/BinaryBuilderEx
+
+*.xcuserstate
+
+*.xcscheme

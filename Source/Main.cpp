@@ -156,12 +156,18 @@ int main (int argc, char* argv[])
                "#ifndef BINARY_" << className.toUpperCase() << "_H\r\n"
                "#define BINARY_" << className.toUpperCase() << "_H\r\n\r\n"
                "namespace " << className << "\r\n"
-               "{\r\n";
-
+               "{\r\n\r\n";
+    
+    *header << "    struct Info { const char* name; const char* data; int size; };\r\n";
+    *header << "    extern Info info[];\r\n";
+    *header << "    extern int infoSize;\r\n\r\n";
+    
     *cpp << "/* (Auto-generated binary data file). */\r\n\r\n"
             "#include \"" << className << ".h\"\r\n\r\n";
 
     int totalBytes = 0;
+    
+    Array<int> bytes;
 
     for (int i = 0; i < files.size(); ++i)
     {
@@ -170,22 +176,29 @@ int main (int argc, char* argv[])
         // (avoid source control files and hidden files..)
         if (! isHiddenFile (file, sourceDirectory))
         {
-            if (file.getParentDirectory() != sourceDirectory)
-            {
-                *header << "  #ifdef " << file.getParentDirectory().getFileName().toUpperCase() << "\r\n";
-                *cpp << "#ifdef " << file.getParentDirectory().getFileName().toUpperCase() << "\r\n";
-
-                totalBytes += addFile (file, className, *header, *cpp);
-
-                *header << "  #endif\r\n";
-                *cpp << "#endif\r\n";
-            }
-            else
-            {
-                totalBytes += addFile (file, className, *header, *cpp);
-            }
+            int sz = addFile (file, className, *header, *cpp);
+            bytes.add (sz);
+            totalBytes += sz;
         }
     }
+    int cnt = 0;
+    *cpp << className << "::Info " << className << "::info[]  = {\r\n";
+    for (int i = 0; i < files.size(); ++i)
+    {
+        const File file (files[i]);
+        
+        // (avoid source control files and hidden files..)
+        if (! isHiddenFile (file, sourceDirectory))
+        {
+            String name = "\"" + file.getFileName() + "\"";
+            String data = className + "::" + (file.getFileName().replaceCharacter (' ', '_').replaceCharacter ('.', '_').retainCharacters ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789"));
+            String size = String (bytes[cnt++]);
+            *cpp << "    { " << name << ", " << data << ", " << size << " },\r\n";
+        }
+        
+    }
+    *cpp << "};\r\n\n";
+    *cpp << "int " << className << "::infoSize = " << String(cnt) << ";\r\n";
 
     *header << "}\r\n\r\n"
                "#endif\r\n";
