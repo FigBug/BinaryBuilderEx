@@ -13,7 +13,39 @@
 
 
 //==============================================================================
+String generateName(const File& file, const File& sourceDir, bool addpath)
+{
+    String name (file.getFileName()
+                   .replaceCharacter (' ', '_')
+                   .replaceCharacter ('.', '_')
+                   .replaceCharacter ('/', '_')
+                   .replaceCharacter ('\\', '_')
+                   .retainCharacters ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789"));
+
+    if (addpath)
+    {
+        String path = file.getParentDirectory().getRelativePathFrom (sourceDir);
+        if (!path.startsWith(".."))
+        {
+            path = path.replaceCharacter (' ', '_')
+                    .replaceCharacter ('.', '_')
+                    .replaceCharacter ('/', '_')
+                    .replaceCharacter ('\\', '_')
+                    .retainCharacters ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789");
+            
+            name = path + "_" + name;
+        }
+    }
+    
+    if (isdigit(name[0]))
+        name = "_" + name;
+    
+    return name;
+}
+
 static int addFile (const File& file,
+                    const File& source,
+                    bool addDir,
                     const String& classname,
                     OutputStream& headerStream,
                     OutputStream& cppStream)
@@ -21,10 +53,7 @@ static int addFile (const File& file,
     MemoryBlock mb;
     file.loadFileAsData (mb);
 
-    const String name (file.getFileName()
-                           .replaceCharacter (' ', '_')
-                           .replaceCharacter ('.', '_')
-                           .retainCharacters ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789"));
+    const String name = generateName(file, source, addDir);
 
     std::cout << "Adding " << name << ": "
               << (int) mb.getSize() << " bytes" << std::endl;
@@ -72,22 +101,40 @@ static bool isHiddenFile (const File& f, const File& root)
 int main (int argc, char* argv[])
 {
     std::cout << std::endl << " BinaryBuilder!  Visit www.juce.com for more info." << std::endl;
-
-    if (argc < 4 || argc > 5)
+    
+    bool addpath = false;
+    
+    StringArray args;
+    for (int i = 0; i < argc; i++)
     {
-        std::cout << " Usage: BinaryBuilder  sourcedirectory targetdirectory targetclassname [optional wildcard pattern]\n\n"
-                     " BinaryBuilder will find all files in the source directory, and encode them\n"
-                     " into two files called (targetclassname).cpp and (targetclassname).h, which it\n"
-                     " will write into the target directory supplied.\n\n"
-                     " Any files in sub-directories of the source directory will be put into the\n"
-                     " resultant class, but #ifdef'ed out using the name of the sub-directory (hard to\n"
-                     " explain, but obvious when you try it...)\n";
-
+        String arg = argv[i];
+        if (arg.startsWith("-"))
+        {
+            if (arg == "-addpath")
+                addpath = true;
+        }
+        else
+        {
+            args.add(arg);
+        }
+    }
+    
+    if (args.size() < 4 || args.size() > 5)
+    {
+        std::cout << " Usage: BinaryBuilder <-addpath> sourcedirectory targetdirectory targetclassname [optional wildcard pattern]\n\n"
+        " BinaryBuilder will find all files in the source directory, and encode them\n"
+        " into two files called (targetclassname).cpp and (targetclassname).h, which it\n"
+        " will write into the target directory supplied.\n\n"
+        " Any files in sub-directories of the source directory will be put into the\n"
+        " resultant class, but #ifdef'ed out using the name of the sub-directory (hard to\n"
+        " explain, but obvious when you try it...)\n";
+        
         return 0;
     }
-
+    
+    
     const File sourceDirectory (File::getCurrentWorkingDirectory()
-                                     .getChildFile (String (argv[1]).unquoted()));
+                                     .getChildFile (args[1].unquoted()));
 
     if (! sourceDirectory.isDirectory())
     {
@@ -99,7 +146,7 @@ int main (int argc, char* argv[])
     }
 
     const File destDirectory (File::getCurrentWorkingDirectory()
-                                   .getChildFile (String (argv[2]).unquoted()));
+                                   .getChildFile (args[2].unquoted()));
 
     if (! destDirectory.isDirectory())
     {
@@ -109,7 +156,7 @@ int main (int argc, char* argv[])
         return 0;
     }
 
-    String className (argv[3]);
+    String className (args[3]);
     className = className.trim();
 
     const File headerFile (destDirectory.getChildFile (className).withFileExtension (".h"));
@@ -122,7 +169,7 @@ int main (int argc, char* argv[])
 
     Array<File> files;
     sourceDirectory.findChildFiles (files, File::findFiles, true,
-                                    (argc > 4) ? argv[4] : "*");
+                                    (args.size() > 4) ? args[4] : "*");
 
     if (files.size() == 0)
     {
@@ -158,7 +205,7 @@ int main (int argc, char* argv[])
                "namespace " << className << "\r\n"
                "{\r\n\r\n";
     
-    *header << "    struct Info { const char* name; const char* data; int size; };\r\n";
+    *header << "    struct Info { const char* name; const char* path; const char* data; int size; };\r\n";
     *header << "    extern Info info[];\r\n";
     *header << "    extern int infoSize;\r\n\r\n";
     
@@ -176,7 +223,7 @@ int main (int argc, char* argv[])
         // (avoid source control files and hidden files..)
         if (! isHiddenFile (file, sourceDirectory))
         {
-            int sz = addFile (file, className, *header, *cpp);
+            int sz = addFile (file, sourceDirectory, addpath, className, *header, *cpp);
             bytes.add (sz);
             totalBytes += sz;
         }
@@ -191,9 +238,11 @@ int main (int argc, char* argv[])
         if (! isHiddenFile (file, sourceDirectory))
         {
             String name = "\"" + file.getFileName() + "\"";
-            String data = className + "::" + (file.getFileName().replaceCharacter (' ', '_').replaceCharacter ('.', '_').retainCharacters ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789"));
+            String data = className + "::" + generateName(file, sourceDirectory, addpath);
+            String path = "\"" + file.getParentDirectory().getRelativePathFrom (sourceDirectory) + "\"";
+            if (path.startsWith("\"..")) path = "\"\"";
             String size = String (bytes[cnt++]);
-            *cpp << "    { " << name << ", " << data << ", " << size << " },\r\n";
+            *cpp << "    { " << name << ", " << path << ", " << data << ", " << size << " },\r\n";
         }
         
     }
