@@ -1,6 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2013
-Project("{446C1D73-738F-CF41-068A-A7A7295DA564}") = "BinaryBuilderEx", "BinaryBuilderEx.vcxproj", "{673F5875-DC2B-BECE-2E7C-55B3B1D0E91D}"
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BinaryBuilderEx - ConsoleApp", "BinaryBuilderEx_ConsoleApp.vcxproj", "{88983F7C-DB65-9E04-84E7-05F8979E0383}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,10 +9,10 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{673F5875-DC2B-BECE-2E7C-55B3B1D0E91D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{673F5875-DC2B-BECE-2E7C-55B3B1D0E91D}.Debug|Win32.Build.0 = Debug|Win32
-		{673F5875-DC2B-BECE-2E7C-55B3B1D0E91D}.Release|Win32.ActiveCfg = Release|Win32
-		{673F5875-DC2B-BECE-2E7C-55B3B1D0E91D}.Release|Win32.Build.0 = Release|Win32
+		{88983F7C-DB65-9E04-84E7-05F8979E0383}.Debug|Win32.ActiveCfg = Debug|Win32
+		{88983F7C-DB65-9E04-84E7-05F8979E0383}.Debug|Win32.Build.0 = Debug|Win32
+		{88983F7C-DB65-9E04-84E7-05F8979E0383}.Release|Win32.ActiveCfg = Release|Win32
+		{88983F7C-DB65-9E04-84E7-05F8979E0383}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="3t6YqETY1" name="BinaryBuilderEx" projectType="consoleapp"
-              juceFolder="../../../juce" jucerVersion="4.2.1" bundleIdentifier="com.figbug.binarybuilderex"
+              juceFolder="../../../juce" jucerVersion="5.4.1" bundleIdentifier="com.figbug.binarybuilderex"
               includeBinaryInAppConfig="1" version="1.0.0">
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="~/SDKs/vstsdk2.4" rtasFolder="~/SDKs/PT_80_SDK"
                objCExtraSuffix="OeJtJb">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="BinaryBuilderEx"
-                       osxSDK="1" osxCompatibility="1" osxArchitecture="default"/>
+                       osxCompatibility="10.9 SDK"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="2" targetName="BinaryBuilderEx"
-                       osxSDK="1" osxCompatibility="1" osxArchitecture="default"/>
+                       osxCompatibility="10.9 SDK"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>
@@ -48,4 +48,7 @@
   <MODULES>
     <MODULE id="juce_core" showAllCode="1"/>
   </MODULES>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
 </JUCERPROJECT>

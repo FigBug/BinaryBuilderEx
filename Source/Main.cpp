@@ -84,7 +84,7 @@ static int addFile (const File& file,
     cppStream << "const char* " << classname << "::" << name
               << " = (const char*) temp" << tempNum << ";\r\n\r\n";
 
-    return mb.getSize();
+    return (int) mb.getSize();
 }
 
 static bool isHiddenFile (const File& f, const File& root)
@@ -158,9 +158,11 @@ int main (int argc, char* argv[])
 
     String className (args[3]);
     className = className.trim();
+    
+    int currentFile = 1;
 
     const File headerFile (destDirectory.getChildFile (className).withFileExtension (".h"));
-    const File cppFile    (destDirectory.getChildFile (className).withFileExtension (".cpp"));
+    File cppFile    (destDirectory.getChildFile (className + String (currentFile)).withFileExtension (".cpp"));
 
     std::cout << "Creating " << headerFile.getFullPathName()
               << " and " << cppFile.getFullPathName()
@@ -179,8 +181,13 @@ int main (int argc, char* argv[])
     }
 
     headerFile.deleteFile();
-    cppFile.deleteFile();
-
+    
+    for (int i = 0; i < 1000; i++)
+    {
+        const File oldCppFile    (destDirectory.getChildFile (className + String (i)).withFileExtension (".cpp"));
+        oldCppFile.deleteFile();
+    }
+    
     ScopedPointer<OutputStream> header (headerFile.createOutputStream());
 
     if (header == nullptr)
@@ -213,6 +220,7 @@ int main (int argc, char* argv[])
             "#include \"" << className << ".h\"\r\n\r\n";
 
     int totalBytes = 0;
+    int currBytes = 0;
     
     Array<int> bytes;
 
@@ -226,6 +234,27 @@ int main (int argc, char* argv[])
             int sz = addFile (file, sourceDirectory, addpath, className, *header, *cpp);
             bytes.add (sz);
             totalBytes += sz;
+            currBytes += sz;
+        }
+        
+        cpp->flush();
+        if (cppFile.getSize() >= 15 * 1024 * 1024)
+        {
+            cppFile = File (destDirectory.getChildFile (className + String (++currentFile)).withFileExtension (".cpp"));
+            
+            cpp = cppFile.createOutputStream();
+            
+            if (cpp == nullptr)
+            {
+                std::cout << "Couldn't open "
+                          << cppFile.getFullPathName() << " for writing" << std::endl << std::endl;
+                return 0;
+            }
+            
+            *cpp << "/* (Auto-generated binary data file). */\r\n\r\n"
+                    "#include \"" << className << ".h\"\r\n\r\n";
+
+            currBytes = 0;
         }
     }
     int cnt = 0;
