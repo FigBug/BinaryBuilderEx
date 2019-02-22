@@ -119,9 +119,9 @@ int main (int argc, char* argv[])
         }
     }
     
-    if (args.size() < 4 || args.size() > 5)
+    if (args.size() < 5 || args.size() > 6)
     {
-        std::cout << " Usage: BinaryBuilder <-addpath> sourcedirectory targetdirectory targetclassname [optional wildcard pattern]\n\n"
+        std::cout << " Usage: BinaryBuilder <-addpath> minfilestocreate sourcedirectory targetdirectory targetclassname [optional wildcard pattern]\n\n"
         " BinaryBuilder will find all files in the source directory, and encode them\n"
         " into two files called (targetclassname).cpp and (targetclassname).h, which it\n"
         " will write into the target directory supplied.\n\n"
@@ -134,7 +134,7 @@ int main (int argc, char* argv[])
     
     
     const File sourceDirectory (File::getCurrentWorkingDirectory()
-                                     .getChildFile (args[1].unquoted()));
+                                     .getChildFile (args[2].unquoted()));
 
     if (! sourceDirectory.isDirectory())
     {
@@ -146,7 +146,7 @@ int main (int argc, char* argv[])
     }
 
     const File destDirectory (File::getCurrentWorkingDirectory()
-                                   .getChildFile (args[2].unquoted()));
+                                   .getChildFile (args[3].unquoted()));
 
     if (! destDirectory.isDirectory())
     {
@@ -156,14 +156,15 @@ int main (int argc, char* argv[])
         return 0;
     }
 
-    String className (args[3]);
+    String className (args[4]);
     className = className.trim();
     
     int currentFile = 1;
 
     const File headerFile (destDirectory.getChildFile (className).withFileExtension (".h"));
-    File cppFile    (destDirectory.getChildFile (className + String (currentFile)).withFileExtension (".cpp"));
-
+    File cppFile (destDirectory.getChildFile (className + String (currentFile)).withFileExtension (".cpp"));
+    File cppWrapperFile (destDirectory.getChildFile (className + String (currentFile) + "Wrapper").withFileExtension (".cpp"));
+    
     std::cout << "Creating " << headerFile.getFullPathName()
               << " and " << cppFile.getFullPathName()
               << " from files in " << sourceDirectory.getFullPathName()
@@ -171,7 +172,7 @@ int main (int argc, char* argv[])
 
     Array<File> files;
     sourceDirectory.findChildFiles (files, File::findFiles, true,
-                                    (args.size() > 4) ? args[4] : "*");
+                                    (args.size() > 5) ? args[5] : "*");
 
     if (files.size() == 0)
     {
@@ -184,8 +185,11 @@ int main (int argc, char* argv[])
     
     for (int i = 0; i < 1000; i++)
     {
-        const File oldCppFile    (destDirectory.getChildFile (className + String (i)).withFileExtension (".cpp"));
+        const File oldCppFile (destDirectory.getChildFile (className + String (i)).withFileExtension (".cpp"));
+        const File oldCppWrapperFile (destDirectory.getChildFile (className + String (i) + "Wrapper").withFileExtension (".cpp"));
+        
         oldCppFile.deleteFile();
+        oldCppWrapperFile.deleteFile();
     }
     
     ScopedPointer<OutputStream> header (headerFile.createOutputStream());
@@ -205,7 +209,7 @@ int main (int argc, char* argv[])
                   << cppFile.getFullPathName() << " for writing" << std::endl << std::endl;
         return 0;
     }
-
+    
     *header << "/* (Auto-generated binary data file). */\r\n\r\n"
                "#ifndef BINARY_" << className.toUpperCase() << "_H\r\n"
                "#define BINARY_" << className.toUpperCase() << "_H\r\n\r\n"
@@ -218,6 +222,8 @@ int main (int argc, char* argv[])
     
     *cpp << "/* (Auto-generated binary data file). */\r\n\r\n"
             "#include \"" << className << ".h\"\r\n\r\n";
+    
+    cppWrapperFile.replaceWithText("#include \"" + className + String (currentFile) + ".cpp\"\n");
 
     int totalBytes = 0;
     int currBytes = 0;
@@ -241,6 +247,9 @@ int main (int argc, char* argv[])
         if (cppFile.getSize() >= 15 * 1024 * 1024)
         {
             cppFile = File (destDirectory.getChildFile (className + String (++currentFile)).withFileExtension (".cpp"));
+            cppWrapperFile = File (destDirectory.getChildFile (className + String (currentFile) + "Wrapper").withFileExtension (".cpp"));
+            
+            cppWrapperFile.replaceWithText ("#include \"" + className + String (currentFile) + ".cpp\"\n");
             
             cpp = cppFile.createOutputStream();
             
@@ -285,6 +294,18 @@ int main (int argc, char* argv[])
     cpp = nullptr;
 
     std::cout << std::endl << " Total size of binary data: " << totalBytes << " bytes" << std::endl;
+    
+    // Create some more dummy wrapper
+    currentFile++;
+    while (currentFile <= args[1].getIntValue())
+    {
+        std::cout << std::endl << " Create empty wrapper file for " << args[1] << std::endl;
+        
+        cppWrapperFile = File (destDirectory.getChildFile (className + String (currentFile) + "Wrapper").withFileExtension (".cpp"));
+        cppWrapperFile.replaceWithText ("\n");
+        
+        currentFile++;
+    }
 
     return 0;
 }
