@@ -160,26 +160,50 @@ int main (int argc, char* argv[])
     className = className.trim();
     
     int currentFile = 1;
+    
+    Array<File> files;
+    sourceDirectory.findChildFiles (files, File::findFiles, true,
+                                    (args.size() > 5) ? args[5] : "*");
 
     const File headerFile (destDirectory.getChildFile (className).withFileExtension (".h"));
     File cppFile (destDirectory.getChildFile (className + String (currentFile)).withFileExtension (".cpp"));
     File cppWrapperFile (destDirectory.getChildFile (className + String (currentFile) + "Wrapper").withFileExtension (".cpp"));
     
-    std::cout << "Creating " << headerFile.getFullPathName()
-              << " and " << cppFile.getFullPathName()
-              << " from files in " << sourceDirectory.getFullPathName()
-              << "..." << std::endl << std::endl;
-
-    Array<File> files;
-    sourceDirectory.findChildFiles (files, File::findFiles, true,
-                                    (args.size() > 5) ? args[5] : "*");
-
     if (files.size() == 0)
     {
         std::cout << "Didn't find any source files in: "
                   << sourceDirectory.getFullPathName() << std::endl << std::endl;
         return 0;
     }
+    
+    bool needsProcessing = false;
+    if (! headerFile.existsAsFile())
+    {
+        needsProcessing = true;
+    }
+    else
+    {
+        for (auto f : files)
+        {
+            if (f.getLastModificationTime() > headerFile.getLastModificationTime())
+            {
+                needsProcessing = true;
+                break;
+            }
+        }
+    }
+    
+    if (! needsProcessing)
+    {
+        std::cout << "No processing required. No files updated" << std::endl;
+        return 0;
+    }
+    
+    std::cout << "Creating " << headerFile.getFullPathName()
+              << " and " << cppFile.getFullPathName()
+              << " from files in " << sourceDirectory.getFullPathName()
+              << "..." << std::endl << std::endl;
+
 
     headerFile.deleteFile();
     
