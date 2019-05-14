@@ -29,9 +29,10 @@
 *.app
 
 Builds/MacOSX/build/Release/BinaryBuilderEx
-
 Builds/MacOSX/build/Debug/BinaryBuilderEx
-
 *.xcuserstate
-
 *.xcscheme
+Release
+Debug
+*.suo
+*.db
