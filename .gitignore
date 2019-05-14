@@ -36,3 +36,5 @@ Release
 Debug
 *.suo
 *.db
+.vs
+*.sdf
