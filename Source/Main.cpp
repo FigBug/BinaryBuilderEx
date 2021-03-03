@@ -60,7 +60,8 @@ static int addFile (const File& file,
 
     headerStream << "    extern const char*  " << name << ";\r\n"
                     "    const int           " << name << "Size = "
-                 << (int) mb.getSize() << ";\r\n\r\n";
+                 << (int) mb.getSize() << ";\r\n"
+                 << "    extern const char*  " << name << "Name;\r\n\r\n";
 
     static int tempNum = 0;
 
@@ -83,6 +84,9 @@ static int addFile (const File& file,
 
     cppStream << "const char* " << classname << "::" << name
               << " = (const char*) temp" << tempNum << ";\r\n\r\n";
+
+    cppStream << "const char* " << classname << "::" << name << "Name"
+              << " = \"" << file.getFileName() << "\";\r\n\r\n";
 
     return (int) mb.getSize();
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="3t6YqETY1" name="BinaryBuilderEx" projectType="consoleapp"
-              juceFolder="../../../juce" jucerVersion="5.4.7" bundleIdentifier="com.figbug.binarybuilderex"
+              juceFolder="../../../juce" bundleIdentifier="com.figbug.binarybuilderex"
               includeBinaryInAppConfig="1" version="1.0.0" reportAppUsage="0"
-              displaySplashScreen="0" cppLanguageStandard="17">
+              displaySplashScreen="0" cppLanguageStandard="17" jucerFormatVersion="1">
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
@@ -14,6 +14,15 @@
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
+    <VS2019 targetFolder="Builds/VisualStudio2019">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core"/>
+      </MODULEPATHS>
+    </VS2019>
   </EXPORTFORMATS>
   <MAINGROUP id="TTBP5JihO" name="BinaryBuilderEx">
     <GROUP id="noYkBuTg" name="Source">

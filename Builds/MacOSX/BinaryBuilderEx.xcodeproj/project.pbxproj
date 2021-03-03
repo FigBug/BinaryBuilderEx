@@ -13,6 +13,10 @@
 			isa = PBXBuildFile;
 			fileRef = 57DDB771ED96A256F190ADF8;
 		};
+		C17566E1AACD033B3DD74E9F = {
+			isa = PBXBuildFile;
+			fileRef = 6AA23C81496E022290EB2A0C;
+		};
 		0D53D8B0AEE37C02C147344B = {
 			isa = PBXBuildFile;
 			fileRef = F769CD634476C91F4C9D0596;
@@ -48,6 +52,13 @@
 			lastKnownFileType = wrapper.framework;
 			name = Cocoa.framework;
 			path = System/Library/Frameworks/Cocoa.framework;
+			sourceTree = SDKROOT;
+		};
+		6AA23C81496E022290EB2A0C = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = Foundation.framework;
+			path = System/Library/Frameworks/Foundation.framework;
 			sourceTree = SDKROOT;
 		};
 		799073185F72F5FAD05253C3 = {
@@ -138,6 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				57DDB771ED96A256F190ADF8,
+				6AA23C81496E022290EB2A0C,
 				F769CD634476C91F4C9D0596,
 			);
 			name = Frameworks;
@@ -193,15 +205,20 @@
 				);
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
-					"../../JuceLibraryCode",
-					"../../../JUCE/modules",
+					"$(SRCROOT)/../../JuceLibraryCode",
+					"$(SRCROOT)/../../../JUCE/modules",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "/usr/bin";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../JuceLibraryCode",
+					"$(SRCROOT)/../../../JUCE/modules",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.figbug.binarybuilderex;
 				PRODUCT_NAME = "BinaryBuilderEx";
 				USE_HEADERMAP = NO;
+				VALID_ARCHS = "i386 x86_64 arm64 arm64e";
 			};
 			name = Debug;
 		};
@@ -234,16 +251,21 @@
 				);
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
-					"../../JuceLibraryCode",
-					"../../../JUCE/modules",
+					"$(SRCROOT)/../../JuceLibraryCode",
+					"$(SRCROOT)/../../../JUCE/modules",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "/usr/bin";
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../JuceLibraryCode",
+					"$(SRCROOT)/../../../JUCE/modules",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.figbug.binarybuilderex;
 				PRODUCT_NAME = "BinaryBuilderEx";
 				USE_HEADERMAP = NO;
+				VALID_ARCHS = "i386 x86_64 arm64 arm64e";
 			};
 			name = Release;
 		};
@@ -344,10 +366,6 @@
 			};
 			name = Release;
 		};
-		78C9910DF129FD687A56D083 = {
-			isa = PBXTargetDependency;
-			target = 80B70DE094998C267F152DD5;
-		};
 		E4C85B0464A93027D035AA1F = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -388,6 +406,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B72EFB0E9D74CA7227F6CAB,
+				C17566E1AACD033B3DD74E9F,
 				0D53D8B0AEE37C02C147344B,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -410,7 +429,7 @@
 		36B6F402BC83F21646259DEF = {
 			isa = PBXProject;
 			buildConfigurationList = E4C85B0464A93027D035AA1F;
-			attributes = { LastUpgradeCheck = 1100; ORGANIZATIONNAME = ""; };
+			attributes = { LastUpgradeCheck = 1230; ORGANIZATIONNAME = ""; };
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = C18D022743CF5BD14D6A6A9E;
