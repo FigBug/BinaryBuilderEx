@@ -216,7 +216,7 @@ int main (int argc, char* argv[])
         oldCppWrapperFile.deleteFile();
     }
     
-    ScopedPointer<OutputStream> header (headerFile.createOutputStream());
+    auto header = headerFile.createOutputStream();
 
     if (header == nullptr)
     {
@@ -225,7 +225,7 @@ int main (int argc, char* argv[])
         return 0;
     }
 
-    ScopedPointer<OutputStream> cpp (cppFile.createOutputStream());
+    auto cpp = cppFile.createOutputStream();
 
     if (cpp == nullptr)
     {

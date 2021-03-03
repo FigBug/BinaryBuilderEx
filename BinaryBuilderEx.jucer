@@ -1,43 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="3t6YqETY1" name="BinaryBuilderEx" projectType="consoleapp"
-              juceFolder="../../../juce" jucerVersion="5.4.1" bundleIdentifier="com.figbug.binarybuilderex"
-              includeBinaryInAppConfig="1" version="1.0.0">
+              juceFolder="../../../juce" jucerVersion="5.4.7" bundleIdentifier="com.figbug.binarybuilderex"
+              includeBinaryInAppConfig="1" version="1.0.0" reportAppUsage="0"
+              displaySplashScreen="0" cppLanguageStandard="17">
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="~/SDKs/vstsdk2.4" rtasFolder="~/SDKs/PT_80_SDK"
-               objCExtraSuffix="OeJtJb">
+    <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="BinaryBuilderEx"
-                       osxCompatibility="10.9 SDK"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="2" targetName="BinaryBuilderEx"
-                       osxCompatibility="10.9 SDK"/>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <LINUX_MAKE targetFolder="Builds/Linux" vstFolder="~/SDKs/vstsdk2.4">
-      <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="BinaryBuilderEx"
-                       libraryPath="/usr/X11R6/lib/"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="2" targetName="BinaryBuilderEx"
-                       libraryPath="/usr/X11R6/lib/"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
-      </MODULEPATHS>
-    </LINUX_MAKE>
-    <VS2013 targetFolder="Builds/VisualStudio2013">
-      <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="BinaryBuilderEx"/>
-        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="BinaryBuilderEx"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
-      </MODULEPATHS>
-    </VS2013>
   </EXPORTFORMATS>
   <MAINGROUP id="TTBP5JihO" name="BinaryBuilderEx">
     <GROUP id="noYkBuTg" name="Source">
